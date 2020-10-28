@@ -1,0 +1,549 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Тестовое API для службы доставки",
+    "version": "1.0.2",
+    "title": "Delivery API",
+    "contact": {
+      "email": "valentin1996132@gmail.com"
+    }
+  },
+  "host": "localhost:5000",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Client",
+      "description": "Запросы для клиента"
+    },
+    {
+      "name": "Courier",
+      "description": "Запросы для курьера"
+    },
+    {
+      "name": "Admin",
+      "description": "Запросы администратора"
+    },
+    {
+      "name": "Owner",
+      "description": "Управление курьерами и зонами"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/admin": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Изменение статуса заказа",
+        "description": "",
+        "operationId": "StatusChange",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Изменение статуса",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OrderStatus"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        }
+      }
+    },
+    "/admin/search": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Получить данные курьера, способного выполнить заказ",
+        "description": "Указываются координаты доставки, возвращается список курьеров, привязанных к данной области",
+        "operationId": "Search_courier",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Изменение статуса",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Search"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "400": {
+            "description": "Invalid coordinates"
+          }
+        }
+      }
+    },
+    "/admin/assign": {
+      "put": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Выдать заказ курьеру",
+        "description": "",
+        "operationId": "Assign_courier",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Изменение статуса",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Assign"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Успешно"
+          },
+          "404": {
+            "description": "Доступный курьер не найден"
+          }
+        }
+      }
+    },
+    "/admin/{id}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Вывести список заказов",
+        "description": "0 - вывести все заказы, любое другое число - конкретный заказ",
+        "operationId": "getOrder",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of order to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        }
+      }
+    },
+    "/courier/{id}": {
+      "get": {
+        "tags": [
+          "Courier"
+        ],
+        "summary": "Получить заказы",
+        "description": "Возвращает все заказы закрепленные за курьером",
+        "operationId": "GetOrders",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID курьера",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        }
+      }
+    },
+    "/courier": {
+      "put": {
+        "tags": [
+          "Courier"
+        ],
+        "summary": "Изменение статуса заказа",
+        "description": "",
+        "operationId": "StatusChangeCourier",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Изменение статуса",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/OrderStatus"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Status has changed"
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        }
+      }
+    },
+    "/client": {
+      "post": {
+        "tags": [
+          "Client"
+        ],
+        "summary": "Создать новый заказ",
+        "description": "",
+        "operationId": "addOrder",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Добавить заказ в базу данных",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Client"
+        ],
+        "summary": "Обновить заказ",
+        "description": "",
+        "operationId": "UpdateOrder",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Обновить данные заказа",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Updated"
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          }
+        }
+      }
+    },
+    "/owner/get/{type}": {
+      "get": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Получить список курьеров/зон доставки",
+        "description": "",
+        "operationId": "GetList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "Type of object to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/owner/courier": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Добавить курьера",
+        "description": "",
+        "operationId": "addCourier",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Новый курьер",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Courier"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/owner/zone": {
+      "post": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Добавить зону доставки",
+        "description": "Задать зону доставки в виде набора координат в десятичной системе",
+        "operationId": "addZone",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Новая зона доставки",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Zone"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/owner/setzone": {
+      "put": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Закрепить зону за курьером",
+        "description": "",
+        "operationId": "SetZone",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Присвоить курьеру зону доставки",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SetZone"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "404": {
+            "description": "Wrong data"
+          }
+        }
+      }
+    },
+    "/owner/delete/{type}/{id}": {
+      "delete": {
+        "tags": [
+          "Owner"
+        ],
+        "summary": "Удалить объект",
+        "description": "Удаляет выбранный объект",
+        "operationId": "deleteObject",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "description": "тип объекта(couriers/zones/orders)",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID удаляемого объекта",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "cellphone": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "OrderStatus": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    },
+    "Zone": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "cor": {
+          "type": "string"
+        }
+      }
+    },
+    "SetZone": {
+      "type": "object",
+      "properties": {
+        "courier_id": {
+          "type": "string"
+        },
+        "zone": {
+          "type": "string"
+        }
+      }
+    },
+    "Courier": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "zone": {
+          "type": "string"
+        },
+        "list": {
+          "type": "string"
+        }
+      }
+    },
+    "Search": {
+      "type": "object",
+      "properties": {
+        "Cor": {
+          "type": "string"
+        }
+      }
+    },
+    "Assign": {
+      "type": "object",
+      "properties": {
+        "CourierID": {
+          "type": "integer"
+        },
+        "OrderID": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}
